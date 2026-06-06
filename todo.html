@@ -1,0 +1,682 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+				<title>Мои задачи | Чистый To-Do List</title>
+				<style>
+					* {
+					margin: 0;
+					padding: 0;
+					box-sizing: border-box;
+					}
+
+					body {
+					background: linear-gradient(145deg, #f0f4fa 0%, #e9eef4 100%);
+					font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+					padding: 2rem 1.5rem;
+					min-height: 100vh;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					}
+
+					/* основной карточный контейнер */
+					.todo-card {
+					max-width: 750px;
+					width: 100%;
+					margin: 0 auto;
+					background: #ffffff;
+					border-radius: 2rem;
+					box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.02);
+					overflow: hidden;
+					transition: all 0.2s ease;
+					}
+
+					/* шапка с датой и энергией */
+					.header {
+					padding: 1.75rem 2rem 1rem 2rem;
+					background: white;
+					border-bottom: 1px solid #eff3f8;
+					}
+
+					.title-section {
+					display: flex;
+					justify-content: space-between;
+					align-items: baseline;
+					flex-wrap: wrap;
+					gap: 8px;
+					margin-bottom: 0.5rem;
+					}
+
+					h1 {
+					font-size: 1.85rem;
+					font-weight: 700;
+					background: linear-gradient(135deg, #1A2C3E, #2C4C6C);
+					background-clip: text;
+					-webkit-background-clip: text;
+					color: transparent;
+					letter-spacing: -0.3px;
+					}
+
+					.date-badge {
+					font-size: 0.9rem;
+					font-weight: 500;
+					color: #5b6e8c;
+					background: #f0f4fa;
+					padding: 0.3rem 1rem;
+					border-radius: 40px;
+					backdrop-filter: blur(2px);
+					}
+
+					.subhead {
+					color: #5f7f9e;
+					font-size: 0.9rem;
+					font-weight: 450;
+					margin-top: 8px;
+					border-left: 3px solid #5f9eff;
+					padding-left: 12px;
+					}
+
+					/* форма добавления */
+					.add-task-area {
+					padding: 1rem 2rem 0.5rem 2rem;
+					background: white;
+					}
+
+					.input-group {
+					display: flex;
+					gap: 12px;
+					background: #f8fafd;
+					border-radius: 60px;
+					padding: 5px 5px 5px 20px;
+					border: 1px solid #e2eaf2;
+					transition: all 0.2s;
+					box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+					}
+
+					.input-group:focus-within {
+					border-color: #5f9eff;
+					box-shadow: 0 0 0 3px rgba(95, 158, 255, 0.2);
+					background: white;
+					}
+
+					#taskInput {
+					flex: 1;
+					border: none;
+					background: transparent;
+					padding: 14px 0;
+					font-size: 1rem;
+					font-weight: 450;
+					color: #1a2c3e;
+					outline: none;
+					}
+
+					#taskInput::placeholder {
+					color: #9ab3cf;
+					font-weight: 400;
+					}
+
+					.add-btn {
+					background: #2c6e9e;
+					border: none;
+					color: white;
+					font-weight: 600;
+					padding: 0 1.8rem;
+					border-radius: 50px;
+					font-size: 0.95rem;
+					cursor: pointer;
+					transition: 0.2s;
+					box-shadow: 0 2px 5px rgba(44, 110, 158, 0.2);
+					letter-spacing: 0.3px;
+					}
+
+					.add-btn:hover {
+					background: #1f547c;
+					transform: scale(0.97);
+					}
+
+					/* фильтры и статистика */
+					.stats-filters {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					flex-wrap: wrap;
+					gap: 12px;
+					padding: 1rem 2rem 0.5rem 2rem;
+					background: white;
+					border-bottom: 1px solid #eff3f8;
+					}
+
+					.task-counter {
+					background: #eef3fc;
+					padding: 5px 12px;
+					border-radius: 30px;
+					font-size: 0.85rem;
+					font-weight: 600;
+					color: #1f5a85;
+					}
+
+					.filter-group {
+					display: flex;
+					gap: 8px;
+					background: #f8fafd;
+					padding: 4px;
+					border-radius: 60px;
+					}
+
+					.filter-btn {
+					background: transparent;
+					border: none;
+					padding: 6px 18px;
+					font-size: 0.8rem;
+					font-weight: 550;
+					border-radius: 40px;
+					cursor: pointer;
+					color: #4e6e8c;
+					transition: 0.2s;
+					}
+
+					.filter-btn.active {
+					background: white;
+					color: #1f6e9e;
+					box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+					border: 1px solid #dde5ef;
+					}
+
+					.delete-completed {
+					background: none;
+					border: 1px solid #e0e8f0;
+					padding: 6px 16px;
+					border-radius: 40px;
+					font-size: 0.75rem;
+					font-weight: 500;
+					color: #b44;
+					cursor: pointer;
+					transition: 0.2s;
+					background: #fff7f7;
+					}
+
+					.delete-completed:hover {
+					background: #ffe2e2;
+					border-color: #f1b0b0;
+					color: #a00;
+					}
+
+					/* список задач */
+					.task-list-container {
+					padding: 1rem 1.5rem 2rem 1.5rem;
+					background: white;
+					}
+
+					.task-list {
+					list-style: none;
+					display: flex;
+					flex-direction: column;
+					gap: 8px;
+					max-height: 460px;
+					overflow-y: auto;
+					padding-right: 6px;
+					}
+
+					.task-list::-webkit-scrollbar {
+					width: 5px;
+					}
+
+					.task-list::-webkit-scrollbar-track {
+					background: #eef2f8;
+					border-radius: 10px;
+					}
+
+					.task-list::-webkit-scrollbar-thumb {
+					background: #bfd4e8;
+					border-radius: 10px;
+					}
+
+					/* карточка задачи */
+					.task-item {
+					background: #ffffff;
+					border-radius: 1.2rem;
+					border: 1px solid #eaf0f6;
+					transition: all 0.2s ease;
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					padding: 0.9rem 1.2rem;
+					box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+					}
+
+					.task-item:hover {
+					border-color: #cde0f0;
+					background: #fefeff;
+					box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+					}
+
+					.task-left {
+					display: flex;
+					align-items: center;
+					gap: 14px;
+					flex: 1;
+					}
+
+					.custom-checkbox {
+					width: 24px;
+					height: 24px;
+					border-radius: 50%;
+					border: 2px solid #bdd4e8;
+					background: white;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					cursor: pointer;
+					transition: 0.1s;
+					flex-shrink: 0;
+					}
+
+					.custom-checkbox.completed {
+					background: #2c9e6e;
+					border-color: #2c9e6e;
+					color: white;
+					}
+
+					.task-text {
+					font-size: 1rem;
+					font-weight: 490;
+					color: #1f2f3e;
+					word-break: break-word;
+					transition: 0.2s;
+					cursor: pointer;
+					flex: 1;
+					}
+
+					.task-text.completed-text {
+					text-decoration: line-through;
+					color: #98aec9;
+					}
+
+					.delete-task {
+					background: transparent;
+					border: none;
+					font-size: 1.4rem;
+					cursor: pointer;
+					color: #c0d0e0;
+					width: 32px;
+					height: 32px;
+					border-radius: 40px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					transition: 0.2s;
+					}
+
+					.delete-task:hover {
+					background: #f5f7fc;
+					color: #e05a5a;
+					}
+
+					.empty-message {
+					text-align: center;
+					padding: 3rem 1.5rem;
+					background: #fbfdff;
+					border-radius: 2rem;
+					color: #8aa8c2;
+					font-weight: 500;
+					}
+
+					footer {
+					padding: 1rem 2rem 1.5rem 2rem;
+					font-size: 0.7rem;
+					text-align: center;
+					color: #92acc7;
+					border-top: 1px solid #ecf3f9;
+					background: white;
+					}
+
+					@media (max-width: 550px) {
+					body {
+					padding: 1rem;
+					}
+					.header {
+					padding: 1.2rem 1.2rem 0.8rem;
+					}
+					.add-task-area {
+					padding: 0.8rem 1.2rem;
+					}
+					.stats-filters {
+					padding: 0.8rem 1.2rem;
+					flex-direction: column;
+					align-items: stretch;
+					}
+					.filter-group {
+					justify-content: center;
+					}
+					.task-list-container {
+					padding: 0.8rem 1rem 1.5rem;
+					}
+					.task-item {
+					padding: 0.7rem 1rem;
+					}
+					.task-text {
+					font-size: 0.9rem;
+					}
+					}
+				</style>
+			</head>
+	<body>
+
+		<div class="todo-card">
+			<div class="header">
+				<div class="title-section">
+					<h1>Мои задачи</h1>
+					<div class="date-badge" id="currentDate"></div>
+				</div>
+				<div class="subhead">
+					🧘 Организуй свой день, отмечай выполненные дела
+				</div>
+			</div>
+
+			<div class="add-task-area">
+				<div class="input-group">
+					<input type="text" id="taskInput" placeholder="Что нужно сделать? Например: Купить продукты..." autocomplete="off">
+						<button class="add-btn" id="addTaskBtn">+ Добавить</button>
+					</div>
+			</div>
+
+			<div class="stats-filters">
+				<div class="task-counter" id="taskCounter">0 активных задач</div>
+				<div class="filter-group">
+					<button class="filter-btn active" data-filter="all">Все</button>
+					<button class="filter-btn" data-filter="active">Активные</button>
+					<button class="filter-btn" data-filter="completed">Выполненные</button>
+				</div>
+				<button class="delete-completed" id="clearCompletedBtn">🗑 Удалить завершённые</button>
+			</div>
+
+			<div class="task-list-container">
+				<ul class="task-list" id="taskList">
+					<!-- динамический список -->
+					<li class="empty-message">
+						Список задач пуст<br>Добавьте новую задачу, используя поле выше.</li>
+				</ul>
+			</div>
+			<footer>
+				✅ отмечай выполненные — управляй продуктивностью
+			</footer>
+		</div>
+
+		<script>
+			// --- Модель данных (хранилище)
+			let tasks = [];
+			let currentFilter = 'all';   // 'all', 'active', 'completed'
+
+			// --- DOM элементы
+			const taskInput = document.getElementById('taskInput');
+			const addBtn = document.getElementById('addTaskBtn');
+			const taskListEl = document.getElementById('taskList');
+			const taskCounterSpan = document.getElementById('taskCounter');
+			const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+			const filterBtns = document.querySelectorAll('.filter-btn');
+
+			// --- Вспомогательные функции
+			function formatDate() {
+			const now = new Date();
+			const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			let formatted = now.toLocaleDateString('ru-RU', options);
+			// Сделаем первую букву заглавной и уберём запятые если нужно (но оставим читабельно)
+			formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+			return formatted;
+			}
+
+			// установка текущей даты в шапку
+			function setDateHeader() {
+			const dateElem = document.getElementById('currentDate');
+			if (dateElem) dateElem.textContent = formatDate();
+			}
+
+			// Сохранение в localStorage
+			function saveToLocalStorage() {
+			localStorage.setItem('todo_app_data', JSON.stringify(tasks));
+			}
+
+			// Загрузка из localStorage
+			function loadFromLocalStorage() {
+			const stored = localStorage.getItem('todo_app_data');
+			if (stored) {
+			try {
+			tasks = JSON.parse(stored);
+			// валидация: убедимся что у каждой задачи есть text, completed, id
+			if (!Array.isArray(tasks)) tasks = [];
+			tasks = tasks.filter(t => t && typeof t.text === 'string').map(t => ({
+			id: t.id || Date.now() + Math.random(),
+			text: t.text,
+			completed: t.completed === true
+			}));
+			} catch(e) { tasks = []; }
+			} else {
+			// небольшие демо-задачи для приветствия (необязательно, но покажет функционал)
+			tasks = [
+			{ id: 1, text: 'Проверить дизайн To-Do листа', completed: false },
+			{ id: 2, text: 'Выполнить утреннюю зарядку', completed: true },
+			{ id: 3, text: 'Купить свежие продукты', completed: false }
+			];
+			saveToLocalStorage();
+			}
+			}
+
+			// --- рендер списка с учётом фильтра
+			function renderTasks() {
+			// фильтруем задачи в зависимости от currentFilter
+			let filteredTasks = [];
+			if (currentFilter === 'all') {
+			filteredTasks = [...tasks];
+			} else if (currentFilter === 'active') {
+			filteredTasks = tasks.filter(task => !task.completed);
+			} else if (currentFilter === 'completed') {
+			filteredTasks = tasks.filter(task => task.completed);
+			}
+
+			// очищаем ul
+			taskListEl.innerHTML = '';
+
+			if (filteredTasks.length === 0) {
+			// пустое состояние с разными подсказками
+			const emptyLi = document.createElement('li');
+			emptyLi.className = 'empty-message';
+			let emptyText = 'Список задач пуст\nДобавьте новую задачу, используя поле выше.';
+			if (currentFilter === 'active') emptyText = 'Нет активных задач 🎉\nОтличная работа!';
+			if (currentFilter === 'completed') emptyText = 'Нет выполненных задач\nСамое время что-то завершить!';
+			emptyLi.textContent = emptyText;
+			emptyLi.style.whiteSpace = 'pre-line';
+			taskListEl.appendChild(emptyLi);
+			} else {
+			filteredTasks.forEach(task => {
+			const li = document.createElement('li');
+			li.className = 'task-item';
+			li.dataset.id = task.id;
+
+			// левая часть (чекбокс + текст)
+			const leftDiv = document.createElement('div');
+			leftDiv.className = 'task-left';
+
+			// кастомный чекбокс
+			const checkSpan = document.createElement('span');
+			checkSpan.className = `custom-checkbox ${task.completed ? 'completed' : ''}`;
+			if (task.completed) {
+			checkSpan.innerHTML = '✓';
+			checkSpan.style.fontSize = '15px';
+			checkSpan.style.fontWeight = 'bold';
+			} else {
+			checkSpan.innerHTML = '';
+			}
+			checkSpan.addEventListener('click', (e) => {
+			e.stopPropagation();
+			toggleTaskComplete(task.id);
+			});
+
+			const taskTextSpan = document.createElement('span');
+			taskTextSpan.className = `task-text ${task.completed ? 'completed-text' : ''}`;
+			taskTextSpan.textContent = task.text;
+			// клик по тексту также переключает состояние
+			taskTextSpan.addEventListener('click', () => {
+			toggleTaskComplete(task.id);
+			});
+
+			leftDiv.appendChild(checkSpan);
+			leftDiv.appendChild(taskTextSpan);
+
+			// кнопка удалить
+			const deleteBtn = document.createElement('button');
+			deleteBtn.className = 'delete-task';
+			deleteBtn.innerHTML = '✕';
+			deleteBtn.setAttribute('aria-label', 'Удалить задачу');
+			deleteBtn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			deleteTaskById(task.id);
+			});
+
+			li.appendChild(leftDiv);
+			li.appendChild(deleteBtn);
+			taskListEl.appendChild(li);
+			});
+			}
+
+			// обновить счётчик активных задач
+			updateCounter();
+			// сохранить состояние фильтров (подсветка кнопок)
+			updateActiveFilterButton();
+			// сохраняем задачи после любых изменений
+			saveToLocalStorage();
+			}
+
+			// переключение статуса завершённости
+			function toggleTaskComplete(taskId) {
+			const task = tasks.find(t => t.id === taskId);
+			if (task) {
+			task.completed = !task.completed;
+			renderTasks();
+			}
+			}
+
+			// удаление одной задачи
+			function deleteTaskById(taskId) {
+			tasks = tasks.filter(t => t.id !== taskId);
+			renderTasks();
+			}
+
+			// удалить все завершённые
+			function clearCompletedTasks() {
+			const hasCompleted = tasks.some(t => t.completed === true);
+			if (!hasCompleted) {
+			// лёгкий фидбек (необязательно, но приятно)
+			return;
+			}
+			tasks = tasks.filter(t => !t.completed);
+			renderTasks();
+			}
+
+			// добавить новую задачу
+			function addNewTask() {
+			let text = taskInput.value.trim();
+			if (text === '') {
+			// пустая строка – лёгкое предупреждение (нативное поле)
+			taskInput.placeholder = 'Пожалуйста, напишите задачу!';
+			taskInput.style.border = '1px solid #f0a3a3';
+			setTimeout(() => {
+			taskInput.placeholder = 'Что нужно сделать? Например: Купить продукты...';
+			taskInput.style.border = '';
+			}, 1000);
+			return;
+			}
+			// создание новой задачи
+			const newTask = {
+			id: Date.now() + Math.random() * 10000,
+			text: text,
+			completed: false
+			};
+			tasks.unshift(newTask); // добавляем в начало списка (свежие сверху)
+			taskInput.value = '';
+			// если текущий фильтр "completed", то новая задача не будет показана – лучше переключить на "all" или "active"
+			// но пользователь сам может переключить, однако для UX после добавления лучше показать активный список без переключения?
+			// если на фильтре "completed" и добавили активную задачу — она не появится, пользователь может подумать что ошибка.
+			// умное поведение: если текущий фильтр == 'completed', то переключаем на 'all' чтобы новую задачу увидели сразу.
+			if (currentFilter === 'completed') {
+			currentFilter = 'all';
+			}
+			renderTasks();
+			// скролл вверх к свежей задаче
+			if (taskListEl.firstChild) {
+			taskListEl.scrollTop = 0;
+			}
+			}
+
+			// обновить счётчик активных задач
+			function updateCounter() {
+			const activeCount = tasks.filter(t => !t.completed).length;
+			let totalTasks = tasks.length;
+			if (currentFilter === 'all') {
+			taskCounterSpan.textContent = `${activeCount} активн${activeCount % 10 === 1 && activeCount !== 11 ? 'ая' : (activeCount === 0 ? 'ых' : 'ых')} из ${totalTasks} задач`;
+			} else if (currentFilter === 'active') {
+			taskCounterSpan.textContent = `${activeCount} активных задач`;
+			} else if (currentFilter === 'completed') {
+			const completedCount = tasks.filter(t => t.completed).length;
+			taskCounterSpan.textContent = `${completedCount} выполненных задач`;
+			} else {
+			taskCounterSpan.textContent = `${activeCount} активных задач`;
+			}
+			// простой вариант всегда показывать активные
+			if (!taskCounterSpan.textContent) taskCounterSpan.textContent = `${activeCount} активных задач`;
+			}
+
+			// установить активную кнопку фильтра
+			function updateActiveFilterButton() {
+			filterBtns.forEach(btn => {
+			const filterValue = btn.getAttribute('data-filter');
+			if (filterValue === currentFilter) {
+			btn.classList.add('active');
+			} else {
+			btn.classList.remove('active');
+			}
+			});
+			}
+
+			// сменить фильтр
+			function setFilter(filter) {
+			if (filter === 'all' || filter === 'active' || filter === 'completed') {
+			currentFilter = filter;
+			renderTasks();
+			}
+			}
+
+			// обработчики событий и инициализация
+			function initEventListeners() {
+			addBtn.addEventListener('click', addNewTask);
+			taskInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') {
+			e.preventDefault();
+			addNewTask();
+			}
+			});
+
+			clearCompletedBtn.addEventListener('click', clearCompletedTasks);
+
+			filterBtns.forEach(btn => {
+			btn.addEventListener('click', (e) => {
+			const filter = btn.getAttribute('data-filter');
+			setFilter(filter);
+			});
+			});
+			}
+
+			// небольшой фикс: при клике на пустое место, но всё ок.
+			function initialRender() {
+			loadFromLocalStorage();
+			setDateHeader();
+			renderTasks();
+			initEventListeners();
+			}
+
+			// Запуск приложения
+			initialRender();
+		</script>
+	</body>
+</html>
